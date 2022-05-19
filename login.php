@@ -6,7 +6,7 @@ if(isset($_COOKIE['login'])) {
 
 	list($email, $cookieHash) = split(',', $_COOKIE['login']);
 	
-	if(hash('sha256', $email . $_ENV['secret']) != $cookieHash) {
+	if(hash('sha256', $email . $_ENV['secret']) == $cookieHash) {
 		header("Location: ./index.php");
 	}
 }
@@ -28,10 +28,6 @@ if(isset($_POST['submitLogin'])) {
 
 	$query = "SELECT * FROM users WHERE email = '$email'";
 	$result = $mysqli->query($query);
-	
-
-	var_dump($result);
-	var_dump(!$result);
 
 	if($result->num_rows == null) {
 		die("[LOGIN] Incorrect Email or Password");
@@ -43,7 +39,7 @@ if(isset($_POST['submitLogin'])) {
 		}
 	}
 
-	setcookie('login', $email . ',' .  hash('sha256', $email) . $_ENV['secret'], time() + 3600);
+	setcookie('login', $email . ',' .  hash('sha256', $email . $_ENV['secret']), time() + 3600);
 
 	header("Location: ./index.php");
 }
